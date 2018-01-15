@@ -21,6 +21,16 @@ continue_execution() {
   fi
 }
 
+complete_log() {
+  if [ -n "$1" ]; then
+    log 'Готово'
+  else
+    log "Ну сарян, иди сюда и делай сам :-]" "$2"
+    log "[Enter] - продолжить скрипт"
+    read
+  fi
+}
+
 as_root() {
   $CMD = $1
   log "Нужен root доступ для выполнения" $CMD
@@ -41,7 +51,7 @@ if [ $? -eq 0 ]; then
     apt-get install -f &&
     apt-get install steam -y &&
     apt-get install -f "
-    log 'Возможно потребуется допил, запустить'
+    log 'Возможно потребуется допил'
   else
     log "Ну сарян, иди сюда и делай сам :-]" "http://store.steampowered.com/about/"
   fi
@@ -50,4 +60,5 @@ fi
 continue_execution "Устанавливаем openarena 0.8.8?"
 if [ $? -eq 0 ]; then
   as_root "apt-get install openarena openarena-data openarena-085-data openarena-088-data"
+  complete_log "$(which openarena)" "?#URL#?"
 fi

@@ -21,6 +21,16 @@ continue_execution() {
   fi
 }
 
+complete_log() {
+  if [ -n "$1" ]; then
+    log 'Готово'
+  else
+    log "Ну сарян, иди сюда и делай сам :-]" "$2"
+    log "[Enter] - продолжить скрипт"
+    read
+  fi
+}
+
 as_root() {
   $CMD = $1
   log "Нужен root доступ для выполнения" $CMD
@@ -79,12 +89,8 @@ continue_execution "Устанавливаем google-chrome-stable (GUI)?"
 if [ $? -eq 0 ]; then
   log 'Начинаю загрузку...'
   wget -O "${WORK_DIR}google-chrome-stable.deb" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb 2>/dev/null
-  if [ $? ]; then
-    as_root "dpkg -i ${WORK_DIR}google-chrome-stable.deb && apt-get install -f"
-    log 'Готово'
-  else
-    log "Ну сарян, иди туда и делай сам :-]" "https://www.google.com/chrome/browser/desktop/index.html"
-  fi
+  as_root "dpkg -i ${WORK_DIR}google-chrome-stable.deb && apt-get install -f"
+  complete_log "$(which google-chrome)" "https://www.google.com/chrome/browser/desktop/index.html"
 fi
 
 
