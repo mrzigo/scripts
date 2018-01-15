@@ -21,6 +21,12 @@ continue_execution() {
   fi
 }
 
+as_root() {
+  $CMD = $1
+  log "Нужен root доступ для выполнения" $CMD
+  su -c "$CMD"
+}
+
 WORK_DIR="/tmp/"
 log "Рабочий каталог" $WORK_DIR
 cd $WORK_DIR
@@ -31,12 +37,17 @@ if [ $? -eq 0 ]; then
   log 'Начинаю загрузку...'
   wget -O ${WORK_DIR}steam.deb https://steamcdn-a.akamaihd.net/client/installer/steam.deb 2>/dev/null
   if [ $? ]; then
-    su -c "dpkg -i ${WORK_DIR}steam.deb"
-    su -c 'apt-get install -f'
-    su -c 'apt-get install steam -y'
-    su -c 'apt-get install -f'
+    as_root "dpkg -i ${WORK_DIR}steam.deb &&
+    apt-get install -f &&
+    apt-get install steam -y &&
+    apt-get install -f "
     log 'Возможно потребуется допил, запустить'
   else
     log "Ну сарян, иди сюда и делай сам :-]" "http://store.steampowered.com/about/"
   fi
+fi
+
+continue_execution "Устанавливаем openarena 0.8.8?"
+if [ $? -eq 0 ]; then
+  as_root "apt-get install openarena openarena-data openarena-085-data openarena-088-data"
 fi

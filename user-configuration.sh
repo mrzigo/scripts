@@ -21,6 +21,12 @@ continue_execution() {
   fi
 }
 
+as_root() {
+  $CMD = $1
+  log "Нужен root доступ для выполнения" $CMD
+  su -c "$CMD"
+}
+
 WORK_DIR="/tmp/"
 log "Рабочий каталог" $WORK_DIR
 cd $WORK_DIR
@@ -50,8 +56,7 @@ PROGRAMM_INSTALL="htop wget curl"
 log "  ${PROGRAMM_INSTALL}"
 continue_execution "Устанавливаем?"
 if [ $? -eq 0 ]; then
-  su -c 'apt-get update'
-  su -c "apt-get install ${PROGRAMM_INSTALL} -y"
+  as_root "apt-get update && apt-get install ${PROGRAMM_INSTALL} -y"
   log 'Готово'
 fi
 
@@ -62,10 +67,10 @@ PROGRAMM_INSTALL="geany guake multisystem inkscape gimp"
 log "  ${PROGRAMM_INSTALL}"
 continue_execution "Устанавливаем?"
 if [ $? -eq 0 ]; then
-  su -c 'apt-add-repository "deb http://liveusb.info/multisystem/depot all main"'
-  su -c 'wget -q http://liveusb.info/multisystem/depot/multisystem.asc -O- | apt-key add -'
-  su -c 'apt-get update'
-  su -c "apt-get install ${PROGRAMM_INSTALL} -y"
+  as_root "apt-add-repository 'deb http://liveusb.info/multisystem/depot all main' &&
+  wget -q http://liveusb.info/multisystem/depot/multisystem.asc -O- | apt-key add - &&
+  apt-get update &&
+  apt-get install ${PROGRAMM_INSTALL} -y"
   log 'Готово'
 fi
 
@@ -75,8 +80,7 @@ if [ $? -eq 0 ]; then
   log 'Начинаю загрузку...'
   wget -O "${WORK_DIR}google-chrome-stable.deb" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb 2>/dev/null
   if [ $? ]; then
-    su -c "dpkg -i ${WORK_DIR}google-chrome-stable.deb"
-    su -c 'apt-get install -f'
+    as_root "dpkg -i ${WORK_DIR}google-chrome-stable.deb && apt-get install -f"
     log 'Готово'
   else
     log "Ну сарян, иди туда и делай сам :-]" "https://www.google.com/chrome/browser/desktop/index.html"

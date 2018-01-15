@@ -8,6 +8,12 @@ log() {
   fi
 }
 
+as_root() {
+  $CMD = $1
+  log "Нужен root доступ для выполнения" $CMD
+  su -c "$CMD"
+}
+
 continue_execution() {
   if [ -n "$1" ]; then
     echo -e "\033[1;32m$1 \033[0;32m[Y/n]\033[0m"
@@ -33,8 +39,7 @@ if [ $? -eq 0 ]; then
   VERSION="$(echo $VERSION)"
   wget -O ${WORK_DIR}slack-desktop.deb https://downloads.slack-edge.com/linux_releases/slack-desktop-$VERSION-amd64.deb 2>/dev/null
   if [ $? ]; then
-    su -c "dpkg -i ${WORK_DIR}slack-desktop.deb"
-    su -c 'apt-get install -f'
+    as_root "dpkg -i ${WORK_DIR}slack-desktop.deb && apt-get install -f"
     log 'Готово'
   else
     log "Ну сарян, иди сюда и делай сам :-]" "https://slack.com/downloads/debian"
@@ -47,8 +52,7 @@ if [ $? -eq 0 ]; then
   log 'Начинаю загрузку...'
   wget -O ${WORK_DIR}atom.io.deb https://atom.io/download/deb 2>/dev/null
   if [ $? ]; then
-    su -c "dpkg -i ${WORK_DIR}atom.io.deb"
-    su -c 'apt-get install -f'
+    as_root "dpkg -i ${WORK_DIR}atom.io.deb && apt-get install -f"
     log 'Готово'
   else
     log "Ну сарян, иди сюда и делай сам :-]" "https://atom.io/"
@@ -59,15 +63,20 @@ fi
 
 continue_execution "Устанавливаем RVM (Ruby Version Manager)?"
 if [ $? -eq 0 ]; then
-  su -c 'gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB'
-  su -c 'curl -sSL https://get.rvm.io | bash -s stable --ruby --gems=rails,puma'
+  gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+  curl -sSL https://get.rvm.io | bash -s stable --ruby --gems=rails,puma
+  . ~/.bashrc
   log 'Известные версии:'
   rvm list known
-  log 'Автоустановка 2.3.4'
-  rvm install 2.3.4
+  # log 'Автоустановка 2.3.4'
+  # rvm install 2.3.4
+  log 'rvm list'
+  rvm list
+
   if [ $? ]; then
     log 'Готово'
   else
     log "Ну сарян, иди сюда и делай сам :-]" "https://rvm.io"
   fi
+
 fi
