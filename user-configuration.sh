@@ -42,7 +42,7 @@ log "Рабочий каталог" $WORK_DIR
 cd $WORK_DIR
 
 
-BASHRC="~/tmp.bashrc"
+BASHRC="$HOME/.bashrc"
 log "Настройка консоли" "Файл $BASHRC"
 continue_execution "Переписать переменную 'PS1'?"
 if [ $? -eq 0 ]; then
@@ -73,7 +73,7 @@ fi
 
 log "Установка базового набора программ" "GUI"
 log "  Будут установлены следующие программы:"
-PROGRAMM_INSTALL="geany guake multisystem inkscape gimp"
+PROGRAMM_INSTALL="geany guake multisystem inkscape gimp vlc"
 log "  ${PROGRAMM_INSTALL}"
 continue_execution "Устанавливаем?"
 if [ $? -eq 0 ]; then

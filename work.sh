@@ -42,6 +42,7 @@ CODENAME=$(lsb_release -a 2>/dev/null | grep -i codename | awk '{print $2}')
 WORK_DIR="/tmp/"
 log "Рабочий каталог" $WORK_DIR
 cd $WORK_DIR
+BASHRC="$HOME/.bashrc"
 
 
 continue_execution "Устанавливаем slack-desktop (GUI)?"
@@ -64,7 +65,6 @@ if [ $? -eq 0 ]; then
 fi
 
 
-
 continue_execution "Устанавливаем RVM (Ruby Version Manager)?"
 if [ $? -eq 0 ]; then
   gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
@@ -76,10 +76,20 @@ if [ $? -eq 0 ]; then
   # rvm install 2.3.4
   log 'rvm list'
   rvm list
-
+  NEW_PATH=$(echo 'echo $PATH' | bash --login)
+  if [ -n "$(echo $NEW_PATH | grep gems)" ]; then
+    log ""
+    log "сейчас PATH=$PATH"
+    log "будет PATH=$NEW_PATH"
+    continue_execution "Выполнить замену PATH в файле $BASHRC?"
+    if [ $? -eq 0 ]; then
+      echo >> $BASHRC
+      echo "export PATH=$NEW_PATH" >> $BASHRC
+    fi
+  fi
   complete_log "$(which rvm)" "https://rvm.io/"
+  complete_log "$(which ruby)" "https://rvm.io/"
 fi
-
 
 
 continue_execution "Устанавливаем NodeJS & NPM (Node Packet Manager)?"
@@ -109,6 +119,5 @@ if [ $? -eq 0 ]; then
   log 'nodejs -v' "$(nodejs -v)"
   log 'node -v' "$(node -v)"
   log 'npm -v' "$(npm -v)"
-
   complete_log "$(npm -v 2>/dev/null)" "https://nodejs.org/en/download/package-manager/"
 fi
