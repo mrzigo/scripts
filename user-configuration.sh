@@ -109,3 +109,22 @@ if [ $? -eq 0 ]; then
     log "Ну сарян, иди сюда и делай сам :-]" "https://desktop.telegram.org/"
   fi
 fi
+
+continue_execution "Устанавливаем audacious (mp3 player, GUI)?"
+if [ $? -eq 0 ]; then
+    as_root "
+      apt-get update &&
+      apt-get install audacious -y
+    "
+    log 'Готово'
+fi
+
+
+continue_execution "Устанавливаем audacity (mp3 edit, GUI)?"
+if [ $? -eq 0 ]; then
+    as_root "
+      apt-get update &&
+      apt-get install audacity -y
+    "
+    log 'Готово'
+fi

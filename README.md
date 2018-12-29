@@ -3,15 +3,15 @@
 
 ### Настройка окружения:
 ```
-curl https://raw.githubusercontent.com/mrzigo/scripts/master/user-configuration.sh | bash -
+bash -c "$(curl https://raw.githubusercontent.com/mrzigo/scripts/master/user-configuration.sh)"
 ```
 
 ### Настройка для работы:
 ```
-curl https://raw.githubusercontent.com/mrzigo/scripts/master/work.sh | bash -
+bash -c "$(curl https://raw.githubusercontent.com/mrzigo/scripts/master/work.sh)"
 ```
 
 ### Настройка для развлечения:
 ```
-curl https://raw.githubusercontent.com/mrzigo/scripts/master/game.sh | bash -
+bash -c "$(curl https://raw.githubusercontent.com/mrzigo/scripts/master/game.sh)"
 ```
