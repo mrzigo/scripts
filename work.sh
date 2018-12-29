@@ -91,33 +91,20 @@ if [ $? -eq 0 ]; then
   complete_log "$(which ruby)" "https://rvm.io/"
 fi
 
-
-continue_execution "Устанавливаем NodeJS & NPM (Node Packet Manager)?"
+continue_execution "Устанавливаем NodeJS & NPM via NVM (Node Version Manager)?"
 if [ $? -eq 0 ]; then
-  APT_FILE='/etc/apt/sources.list.d/nodesource.list'
-  log 'Известны три версии' '6(default), 8, 9'
-  log "Какую будем устанавливать (в ${APT_FILE}, файл будет заменен!)?"
+  curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
+  log "Какую версию будем устанавливать (default 8.12)?"
   read NODE_VERSION
-  echo > $APT_FILE
-  if [ "${NODE_VERSION}" -eq "8" ]; then
-    log 'Выбрана версия 8'
-    echo deb https://deb.nodesource.com/node_8.x $CODENAME main >> $APT_FILE
-    echo deb https://deb.nodesource.com/node_8.x $CODENAME main >> $APT_FILE
-  else
-    if [ "${NODE_VERSION}" -eq "9" ]; then
-      log 'Выбрана версия 9'
-      echo deb https://deb.nodesource.com/node_9.x $CODENAME main >> $APT_FILE
-      echo deb https://deb.nodesource.com/node_9.x $CODENAME main >> $APT_FILE
-    else
-      log 'Выбрана версия 6(по умолчанию)'
-      echo deb https://deb.nodesource.com/node_6.x $CODENAME main >> $APT_FILE
-      echo deb-src https://deb.nodesource.com/node_6.x $CODENAME main >> $APT_FILE
-    fi
+  . "$HOME/.nvm/nvm.sh"  # This loads nvm
+  if [ -z "${NODE_VERSION}" ]; then
+    log 'Выбрана версия 8.12'
+    NODE_VERSION=8.12
   fi
-  as_root "apt-get update && apt-get purge node* && apt-get install nodejs"
-  log 'что получилось в итоге'
-  log 'nodejs -v' "$(nodejs -v)"
+  
+  nvm install ${NODE_VERSION}
+  nvm use ${NODE_VERSION}
+  
   log 'node -v' "$(node -v)"
   log 'npm -v' "$(npm -v)"
-  complete_log "$(npm -v 2>/dev/null)" "https://nodejs.org/en/download/package-manager/"
 fi
